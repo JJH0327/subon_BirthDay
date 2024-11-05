@@ -1,1 +1,504 @@
-asdf
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Happy Birthday!</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background-color: #FFFBF0;
+            color: #333;
+            text-align: center;
+            padding: 10px;
+            margin: 0;
+            max-width: 430px;
+            margin: 0 auto;
+        }
+        .meme-card {
+            border: 2px dashed #FFC0CB;
+            padding: 15px;
+            margin: 15px auto;
+            width: 90%;
+            background-color: #FFF;
+            border-radius: 15px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        .character-img {
+            max-width: 120px;
+            margin-top: 10px;
+        }
+        .btn-reveal {
+            background-color: #FF69B4;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .btn-reveal:hover {
+            background-color: #FF1493;
+        }
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-top: 10px;
+        }
+        .fortune-cookie {
+            font-size: 16px;
+            color: #FF6347;
+            margin-top: 15px;
+        }
+        #previewImage {
+            margin-top: 15px;
+            max-width: 150px;
+            border-radius: 15px;
+        }
+        canvas {
+            width: 100%;
+            height: auto;
+            max-width: 300px;
+            margin-top: 10px;
+            border: 1px solid #000;
+        }
+        .slideshow-container {
+            position: relative;
+            max-width: 100%;
+            margin: auto;
+        }
+        .mySlides {
+            display: none;
+        }
+        .slide-image {
+            width: 100%;
+            border-radius: 15px;
+        }
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            margin-top: -22px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            transition: 0.6s ease;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+        }
+        .next {
+            right: 0;
+            border-radius: 3px 0 0 3px;
+        }
+        .prev {
+            left: 0;
+            border-radius: 3px 0 0 3px;
+        }
+        .prev:hover, .next:hover {
+            background-color: rgba(0,0,0,0.8);
+        }
+        .popup-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 500px;
+        background-color: #FFFBF0;
+        border-radius: 15px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 20px;
+        overflow: hidden; /* 추가: 컨테이너 안에서 이미지 넘침 방지 */
+    }
+
+    .popup-container img {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%; /* 이미지가 컨테이너 안에 들어오도록 */
+        object-fit: contain; /* 비율 유지하며 맞춤 */
+        border-radius: 10px;
+    }
+
+    .popup-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #FF69B4; /* 핑크색 배경 */
+        color: #FFF; /* 아이콘 색상 */
+        border: none;
+        border-radius: 10%; /* 동그라미 */
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        font-size: 18px;
+        z-index: 1001; /* 팝업 이미지보다 위에 위치 */
+        display: flex; /* 아이콘 중앙 정렬 */
+        align-items: center;
+        justify-content: center;
+    }
+
+
+        
+        .roulette-container {
+            position: relative;
+            width: 100%;
+            height: auto;
+            max-width: 300px; /* 캔버스 크기 조정 */
+            margin: 0 auto;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-width: 300px; /* 캔버스가 밈 카드 안에 들어가도록 설정 */
+            transition: 2s;
+            border: none; /* 테두리 제거 */
+
+        }
+
+        .pin {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid red; /* 역삼각형 핀 */
+            z-index: 22;
+        }        
+        .btn-reveal {
+            background-color: #FF69B4;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-reveal:hover {
+            background-color: #FF1493;
+        }
+        
+        .frame {
+            max-width: 100%;
+            max-height: 300px; /* 팝업에 맞는 적절한 높이 */
+            width: auto;
+            height: auto;
+            object-fit: contain; /* 이미지 비율을 유지하면서 팝업에 맞게 조정 */
+            border-radius: 10px;
+        }
+        button {
+            z-index: 1000;
+            background: #FF1493;
+            margin-top: 1rem;
+            padding: 0.8rem 1.8rem;
+            border: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        button:active {
+            background: #444;
+            color: #f9f9f9;
+        }
+
+        #menu {
+            width: 100%;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        #menu::before {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid red;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 22;
+        }
+
+
+
+    </style>
+        <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+
+</head>
+<body>
+    <!-- Profile Image Section -->
+    <img src="profile-image.jpg" alt="Profile Image" class="profile-img">
+
+    <!-- Background Music -->
+    <audio id="bgm" src="audio.mp3" autoplay loop></audio>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const audio = document.getElementById('bgm');
+            audio.play().catch(() => {
+               
+            });
+        });
+    </script>
+
+    <!-- Welcome Section -->
+    <div class="meme-card">
+        <h1>❤️ 생일 축하해 ❤️ <br> Jisubon ! </h1>
+        <p> 최고로 행복한 하루 보내 🎉 </p>
+    </div>
+
+    <!-- Slideshow Section -->
+    <div class="meme-card">
+        <h2>☘ 러블리 지수 ☘</h2>
+        <h3> Best 10 </h3>
+        <div class="slideshow-container">
+            <div class="mySlides">
+                <img src="cute-animal1.png" class="slide-image" alt="귀여운 캐릭터 1">
+            </div>
+            <div class="mySlides">
+                <img src="cute-animal2.png" class="slide-image" alt="귀여운 캐릭터 2">
+            </div>
+            <div class="mySlides">
+                <img src="cute-animal3.png" class="slide-image" alt="귀여운 캐릭터 3">
+            </div>
+            <div class="mySlides">
+                <img src="cute-animal4.png" class="slide-image" alt="귀여운 캐릭터 1">
+            </div>
+            <div class="mySlides">
+                <img src="cute-animal5.png" class="slide-image" alt="귀여운 캐릭터 1">
+            </div>
+            <div class="mySlides">
+                <img src="cute-animal6.png" class="slide-image" alt="귀여운 캐릭터 1">
+            </div>
+            <div class="mySlides">
+                <img src="cute-animal7.png" class="slide-image" alt="귀여운 캐릭터 1">
+            </div>
+            <div class="mySlides">
+                <img src="cute-animal8.png" class="slide-image" alt="귀여운 캐릭터 1">
+            </div>
+            <div class="mySlides">
+                <img src="cute-animal9.png" class="slide-image" alt="귀여운 캐릭터 1">
+            </div>
+            <div class="mySlides">
+                <img src="cute-animal10.png" class="slide-image" alt="귀여운 캐릭터 1">
+            </div>
+            <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+            <a class="next" onclick="plusSlides(1)">&#10095;</a>
+        </div>
+    </div>
+
+    <script>
+        let slideIndex = 1;
+        showSlides(slideIndex);
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function showSlides(n) {
+            let i;
+            const slides = document.getElementsByClassName("mySlides");
+            if (n > slides.length) {slideIndex = 1}
+            if (n < 1) {slideIndex = slides.length}
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slides[slideIndex-1].style.display = "block";
+        }
+    </script>
+
+    <!-- Fortune Cookie Section -->
+    <div class="meme-card">
+        <h2>🌟 김지수 어록 🌟</h2>
+        <button class="btn-reveal" onclick="revealFortune()">열어보기</button>
+        <div id="fortuneText" class="fortune-cookie" style="display: none;"></div>
+    </div>
+
+    <script>
+        function revealFortune() {
+            const fortunes = [
+                "세상에 70억명의 김지수 팬이 있다면, \n 나는 그들 중 한 명일 것이다.\n세상에 1억명의 김지수 팬이 있다면, \n나 또한 그들 중 한 명일 것이다.\n세상에 천만 명의 김지수 팬이 있다면, \n나는 여전히 그들 중 한 명일 것이다.\n세상에 백 명의 김지수 팬이 있다면, \n나는 아직도 그들 중 한 명일 것이다.\n세상에 한 명의 김지수 팬이 있다면, \n그 사람은 아마도 나일 것이다.\n세상에 단 한 명의 김지수 팬도 없다면, \n나는 그제서야 이 세상에 없는 것이다.\n김지수, 나의 사랑.\n김지수, 나의 빛.\n김지수, 나의 어둠.\n김지수, 나의 삶.\n김지수, 나의 기쁨.\n김지수, 나의 슬픔.\n김지수, 나의 고통.\n김지수, 나의 안식. \n 김지수, 나.",
+                "한국에서는 사랑\n일본에서는 愛\n미국에서는 Love \n중국에서는 爱 \n독일에서는 Liebe\n포르투갈에서는 Amor\n폴란드에서는 Miłość\n그리고 세계에서는 사랑을 김지수라고 부른다. \n김지수, 당신을 김지수합니다.",
+                "Who is jisuKim?\nFor the blind, She is the vision.\nFor the hungry, She is the chef.\nFor the thirsty, She is the water.\nIf jisuKim thinks, I agree.\nIf jisuKim speaks, I’m listening.\nIf jisuKim has one fan, it is me.\nIf jisuKim has no fans, I don’t exist.",
+                "어제 김지수 카페 다녀왔습니다.\n김지수 카페가 열린 건 아니고요.\n그냥 카페에서 김지수 생각했습니다.\n카페에 간 건 아니고요.\n그냥 집에서 커피를 마셨습니다.\n사실 커피도 안 마셨습니다.\n그냥 김지수인 상태입니다.",
+                "김지수 뒤에서 걷지 마라.\n 김지수는 그대를 이끌지 않을 수도 있다.\n 김지수 앞에서 걷지 마라.\n김지수는 그대를 따르지 않을 수도 있다.\n다만 김지수 옆에서 걸으라.\n김지수의 벗이 될 수 있도록.",
+                "나의 눈이 다시 떠진 이유는\n내 딸 심청이의 슬픈 희생때문이 아니라\n오직 김지수의 생일을 보기 위해서였다\n\n- 심봉사"
+            ];
+            const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+            const fortuneText = document.getElementById('fortuneText');
+            fortuneText.innerText = randomFortune;
+            fortuneText.style.display = 'block';
+        }
+    </script>
+
+    <!-- Drawing Game Section -->
+    <div class="meme-card">
+        <h2>🎡 사랑의 룰렛 🎡</h2>
+        <p>룰렛 결과를 반드시 성공 해야해! <br> 장난안치고. </p>
+        <div id="menu">
+            <canvas width="600" height="600"></canvas>  
+            <div id="resultText" class="fortune-cookie" style="display: none; margin-top: 15px;"></div>
+            <button onclick="rotate()">룰렛 돌리기</button>
+        </div>
+    </div>
+
+    <script>
+        const product = ["진혁이 키보드사주기", "한강 데이트", "포토이즘 찍기", "맛있는거 먹으러가기", "푸바오보러가기", "스카이다이빙 낙하산없이하기"];
+        const colors = ["#FF85A1", "#FFC0CB", "#FF69B4", "#FFD700", "#FF4500", "#00FA9A"]; // 6개 색상
+
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+        const $c = canvas;
+
+        const drawWheel = () => {
+            const arc = (2 * Math.PI) / product.length;
+            
+            product.forEach((item, index) => {
+                const angle = index * arc;
+                ctx.beginPath();
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.moveTo(300, 300);
+                ctx.arc(300, 300, 300, angle, angle + arc);
+                ctx.lineTo(300, 300);
+                ctx.fill();
+
+                // 텍스트 설정
+                ctx.save();
+                ctx.translate(300, 300);
+                ctx.rotate(angle + arc / 2);
+                ctx.fillStyle = "#FFF"; // 텍스트 색상 흰색
+                ctx.font = '20px Pretendard';
+                ctx.textAlign = 'center';
+                ctx.fillText(item, 150, 10);
+                ctx.restore();
+            });
+        };
+
+        const rotate = () => {
+            $c.style.transform = `initial`;
+            $c.style.transition = `initial`;
+
+            setTimeout(() => {
+                const arc = 360 / product.length ;
+                const randomNum = Math.floor(Math.random() * 29) + 1;
+                const rotate = (3600 + (arc * 3) - (arc / 2)) - randomNum; // 첫 번째 옵션에서 멈추도록 설정
+                $c.style.transform = `rotate(-${rotate}deg)`;
+                $c.style.transition = `2s`;
+
+                setTimeout(() => {
+                const resultText = document.getElementById('resultText');
+                resultText.innerText = "룰렛 결과 : 진혁이 키보드 사주기";
+                resultText.style.display = 'block';
+                }, 2000); // 회전 후 결과 표시
+            }, 1);
+        };
+
+        // 초기 룰렛 그리기
+        drawWheel();
+    </script>
+
+
+<div class="meme-card">
+    <h2>👹 귀여운 사진 업로드 하기 👹</h2>
+    <p>여기에서 너의 가장 예쁜 사진을 업로드해봐!🤭</p>
+    <input type="file" id="photoUpload" accept="image/*">
+    <button class="btn-reveal" onclick="showMonsterPreview()">미리보기</button>
+</div>
+
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup()"></div>
+<div class="popup-container" id="popupContainer">
+    <button class="popup-close" onclick="closePopup()">&times;</button>
+    <img id="monsterPreview" class="frame" alt="Monster Preview">
+</div>
+
+<script>
+    function showMonsterPreview() {
+        const monsterImages = [
+            'monster1.png',
+            'monster2.png',
+            'monster3.png'
+        ];
+        const randomIndex = Math.floor(Math.random() * monsterImages.length);
+        
+        const popupOverlay = document.getElementById('popupOverlay');
+        const popupContainer = document.getElementById('popupContainer');
+        const monsterPreview = document.getElementById('monsterPreview');
+
+        monsterPreview.onload = function() {
+            const popupMaxWidth = popupContainer.clientWidth;
+            const popupMaxHeight = popupContainer.clientHeight;
+
+            if (this.naturalWidth > popupMaxWidth || this.naturalHeight > popupMaxHeight) {
+                monsterPreview.style.maxWidth = `${popupMaxWidth}px`;
+                monsterPreview.style.maxHeight = `${popupMaxHeight}px`;
+            } else {
+                monsterPreview.style.width = 'auto';
+                monsterPreview.style.height = 'auto';
+            }
+        };
+
+        monsterPreview.src = monsterImages[randomIndex];
+        popupOverlay.style.display = 'block';
+        popupContainer.style.display = 'flex';
+    }
+
+    function closePopup() {
+        const popupOverlay = document.getElementById('popupOverlay');
+        const popupContainer = document.getElementById('popupContainer');
+        popupOverlay.style.display = 'none';
+        popupContainer.style.display = 'none';
+    }
+</script>
+
+    
+    <div class="meme-card">
+        <h2>❤️ 너에게 줄 편지 ❤️</h2>
+        <p>버튼을 눌러 나의 편지를 확인해봐!</p>
+        <button class="btn-reveal" onclick="showGift()">편지 보기</button>
+        <div id="giftContent" style="display: none; margin-top: 20px;">
+            <p>11100000 10110000 10101100<br>
+                11100000 10110001 10010000<br>
+                11100000 10110011 10001000<br>
+                00101100<br>
+                00100000<br>
+                11100000 10110001 10011001<br>
+                11100000 10110000 10100100<br>
+                11100000 10110011 10000100
+                <br>
+                         ❤️
+                </p>
+        </div>
+    </div>
+
+    <script>
+        function showGift() {
+            const giftContent = document.getElementById('giftContent');
+            giftContent.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
